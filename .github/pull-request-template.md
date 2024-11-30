@@ -1,12 +1,3 @@
----
-name: Pull Request Template
-about: Create a pull request
-title: ''
-labels: ''
-assignees: ''
-
----
-
 ## Types of changes
 
 What types of changes does your code introduce to the system?
