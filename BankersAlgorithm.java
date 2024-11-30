@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,36 +23,38 @@ public class BankersAlgorithm {
         int resourceCount = sc.nextInt();
         sc.nextLine();
 
+        StringBuilder letters = new StringBuilder();
+        for (int j = 0; j < resourceCount; j++) {
+            letters.append((char) ('A' + j));
+            if (j < resourceCount - 1) {
+                letters.append(", ");
+            }
+        }
+
         List<Integer> available = new ArrayList<>();
-        System.out.println("Enter the initial amount for the resources:");
-        for (int i = 0; i < resourceCount; i++) {
-            char resourceLetter = (char) ('A' + i);
-            System.out.print("Resource " + resourceLetter + ": ");
-            available.add(sc.nextInt());
-            sc.nextLine();
+        System.out.print("Enter the initial amount for the resources: " + "(" + letters + "): ");
+        String InitialResource = sc.nextLine();
+        for (String str : Arrays.asList(InitialResource.split(",\\s*"))) {
+            available.add(Integer.parseInt(str));
         }
 
         List<Process> processes = new ArrayList<>();
         for (int i = 0; i < processCount; i++) {
-            System.out.println("\nEnter data for process " + (i + 1) + ": ");
+            System.out.println("\nEnter data for process " + (i) + ": ");
 
             List<Integer> max = new ArrayList<>();
             List<Integer> allocation = new ArrayList<>();
 
-            System.out.println("\nMaximum resource demands:");
-            for (int j = 0; j < resourceCount; j++) {
-                char resourceLetter = (char) ('A' + j);
-                System.out.print("Resource " + resourceLetter + ": ");
-                max.add(sc.nextInt());
-                sc.nextLine();
+            System.out.print("Maximum resource demands of process " + i + " (" + letters + "): ");
+            String MaxResource = sc.nextLine();
+            for (String str : Arrays.asList(MaxResource.split(",\\s*"))) {
+                max.add(Integer.parseInt(str));
             }
 
-            System.out.println("\nAllocated resources:");
-            for (int k = 0; k < resourceCount; k++) {
-                char resourceLetter = (char) ('A' + k);
-                System.out.print("Resource " + resourceLetter + ": ");
-                allocation.add(sc.nextInt());
-                sc.nextLine();
+            System.out.print("Allocated resource for process " + i + " (" + letters + "): ");
+            String AllocatedResource = sc.nextLine();
+            for (String str : Arrays.asList(AllocatedResource.split(",\\s*"))) {
+                allocation.add(Integer.parseInt(str));
             }
 
             processes.add(new Process(i, allocation, max));
@@ -67,20 +70,19 @@ public class BankersAlgorithm {
             int ProcessNumberRequest = sc.nextInt();
             sc.nextLine();
 
-            List<Integer> requestResource = new ArrayList<Integer>();
+            List<Integer> RequestResourceList = new ArrayList<Integer>();
 
-            for (int i = 0; i < resourceCount; i++) {
-                char resourceLetter = (char) ('A' + i);
-                System.out.print("Resource " + resourceLetter + ": ");
-                requestResource.add(sc.nextInt());
-                sc.nextLine();
+            System.out.print("Maximum resource demands of process " + ProcessNumberRequest + " (" + letters + "): ");
+            String RequestResource = sc.nextLine();
+            for (String str : Arrays.asList(RequestResource.split(",\\s*"))) {
+                RequestResourceList.add(Integer.parseInt(str));
             }
 
-            Process process = processes.get(ProcessNumberRequest - 1);
-            Request request = new Request(process, available, requestResource);
+            Process process = processes.get(ProcessNumberRequest);
+            Request request = new Request(process, available, RequestResourceList);
 
-            processes.get(ProcessNumberRequest-1).setAllocation(request.ComputeAllocation());
-            processes.get(ProcessNumberRequest-1).setNeed(request.ComputeNeed());
+            processes.get(ProcessNumberRequest).setAllocation(request.ComputeAllocation());
+            processes.get(ProcessNumberRequest).setNeed(request.ComputeNeed());
             available = request.ComputeAvailable();
         } else {
             System.out.println("Proceeding");
@@ -102,7 +104,7 @@ public class BankersAlgorithm {
 
         List<String> lettersList = new ArrayList<>();
         for (int i = 0; i < resourceCount; i++) {
-            lettersList.add("" + (char) ('A' + i));
+            lettersList.add("" + (char)('A' + i));
         }
         String letters = listToString(lettersList);
 
