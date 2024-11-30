@@ -5,6 +5,14 @@ import java.util.Scanner;
 public class BankersAlgorithm {
 
     public static void main(String[] args) {
+
+
+        /*
+        ================
+        Set Processes
+        ================
+        */
+
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter the number of processes: ");
@@ -46,6 +54,37 @@ public class BankersAlgorithm {
 
             processes.add(new Process(i, allocation, max));
         }
+        /*
+        ================
+        Request Resource
+        ================
+        */
+        System.out.print("Do you want to make a request resource? Yes or No: " );
+        sc.nextLine();
+        if(sc.nextLine() == "Yes"){
+            System.out.print("What process will make a request?: " );
+            int ProcessNumberRequest = sc.nextInt();
+            sc.nextLine();
+
+            List<Integer> requestResource = new ArrayList<Integer>();
+
+            for(int i = 0; i < resourceCount; i++){
+                char resourceLetter = (char) ('A' + i);
+                System.out.print("Resource " + resourceLetter + ": ");
+                requestResource.add(sc.nextInt());
+                sc.nextLine();
+            }
+
+            Process process = processes.get(ProcessNumberRequest - 1);
+            Request request = new Request(process, available, requestResource);
+            
+            processes.get(ProcessNumberRequest).setAllocation(request.ComputeAllocation());
+            processes.get(ProcessNumberRequest).setNeed(request.ComputeNeed());   
+            available = request.ComputeAvailable();     
+        }else{
+            System.err.println("Proceeding");
+        }
+
 
         // Validate if deadlock
         // Validate if sequence is safe

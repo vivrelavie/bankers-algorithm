@@ -36,4 +36,12 @@ public class Process {
     public List<Integer> getNeed(){
         return Need;
     }
+
+    public void setNeed(List<Integer> need){
+        Need = need;
+    }
+
+    public void setAllocation(List<Integer> allocation){
+        Allocation = allocation;
+    }
 }
