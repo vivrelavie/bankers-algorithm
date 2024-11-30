@@ -28,6 +28,7 @@ public class BankersAlgorithm {
             char resourceLetter = (char) ('A' + i);
             System.out.print("Resource " + resourceLetter + ": ");
             available.add(sc.nextInt());
+            sc.nextLine();
         }
 
         List<Process> processes = new ArrayList<>();
@@ -42,6 +43,7 @@ public class BankersAlgorithm {
                 char resourceLetter = (char) ('A' + j);
                 System.out.print("Resource " + resourceLetter + ": ");
                 max.add(sc.nextInt());
+                sc.nextLine();
             }
 
             System.out.println("\nAllocated resources:");
@@ -49,6 +51,7 @@ public class BankersAlgorithm {
                 char resourceLetter = (char) ('A' + k);
                 System.out.print("Resource " + resourceLetter + ": ");
                 allocation.add(sc.nextInt());
+                sc.nextLine();
             }
 
             processes.add(new Process(i, allocation, max));
@@ -59,8 +62,7 @@ public class BankersAlgorithm {
          * ================
          */
         System.out.print("Do you want to make a request resource? Yes or No: ");
-        sc.nextLine();
-        if (sc.nextLine() == "Yes") {
+        if (sc.nextLine().equalsIgnoreCase("yes")) {
             System.out.print("What process will make a request?: ");
             int ProcessNumberRequest = sc.nextInt();
             sc.nextLine();
@@ -77,26 +79,39 @@ public class BankersAlgorithm {
             Process process = processes.get(ProcessNumberRequest - 1);
             Request request = new Request(process, available, requestResource);
 
-            processes.get(ProcessNumberRequest).setAllocation(request.ComputeAllocation());
-            processes.get(ProcessNumberRequest).setNeed(request.ComputeNeed());
+            processes.get(ProcessNumberRequest-1).setAllocation(request.ComputeAllocation());
+            processes.get(ProcessNumberRequest-1).setNeed(request.ComputeNeed());
             available = request.ComputeAvailable();
         } else {
-            System.err.println("Proceeding");
+            System.out.println("Proceeding");
         }
 
         // Validate if deadlock
-        // Validate if sequence is safe
+        // Validate if safe sequence
 
         // Output table matrix
-        DisplayProcesses(processes);
+        DisplayProcesses(processes, resourceCount);
 
         sc.close();
     }
 
-    public static void DisplayProcesses(List<Process> processes) {
+    public static void DisplayProcesses(List<Process> processes, int resourceCount) {
         // Print the header
         System.out.printf("%-10s %-20s %-20s %-20s %-20s%n",
                 "Process", "Allocation", "Max", "Need", "Available");
+
+        List<String> lettersList = new ArrayList<>();
+        for (int i = 0; i < resourceCount; i++) {
+            lettersList.add("" + (char) ('A' + i));
+        }
+        String letters = listToString(lettersList);
+
+        System.out.printf("%-10s %-20s %-20s %-20s %-20s%n",
+                "",
+                letters,
+                letters,
+                letters,
+                letters);
 
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
@@ -115,11 +130,11 @@ public class BankersAlgorithm {
         System.out.println();
     }
 
-    private static String listToString(List<Integer> list) {
+    private static <T> String listToString(List<T> list) {
         StringBuilder sb = new StringBuilder();
-        for (int num : list) {
-            sb.append(num).append(" ");
+        for (T element : list) {
+            sb.append(element).append(" ");
         }
-        return sb.toString().trim(); // Remove trailing space
+        return sb.toString().trim();
     }
 }

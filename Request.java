@@ -8,8 +8,8 @@ public class Request {
     private Process process;
     private List<Integer> request;
     private List<Integer> available;
-    public List<Integer> originalAllocation = process.getAllocation();
-    public List<Integer> originalNeed = process.getNeed();
+    public List<Integer> originalAllocation;
+    public List<Integer> originalNeed;
     public List<Integer> originalAvailable;
 
     public Request(Process process, List<Integer> available, List<Integer> request) {
@@ -17,6 +17,9 @@ public class Request {
         this.request = request;
         this.available = available;
         this.originalAvailable = available;
+        this.originalAllocation = process.getAllocation();
+        this.originalNeed = process.getNeed();
+
     }
 
 
