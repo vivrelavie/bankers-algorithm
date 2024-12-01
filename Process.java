@@ -6,18 +6,21 @@ public class Process {
     private List<Integer> Allocation = new ArrayList<>();
     private List<Integer> Max;
     private List<Integer> Need;
+    private boolean isRequest;
     
     public Process(int ProcessNum, List<Integer> Allocation, List<Integer> Max) {
         this.ProcessNum = ProcessNum;
         this.Allocation = new ArrayList<>(Allocation);
         this.Max = new ArrayList<>(Max);
+        this.isRequest = false;
         calculateNeed();
     }
 
     public void calculateNeed(){
         Need = new ArrayList<>();
         for(int i = 0; i < Max.size(); i++){
-            Need.add(Max.get(i) - Allocation.get(i));
+            int n = Max.get(i) - Allocation.get(i);
+            Need.add(n < 0 ? 0 : n);
         }
     }
 
@@ -43,5 +46,13 @@ public class Process {
 
     public void setAllocation(List<Integer> allocation){
         Allocation = allocation;
+    }
+
+    public void setRequest(boolean request){
+        this.isRequest = request;
+    }
+
+    public Boolean getRequest(){
+        return isRequest;
     }
 }

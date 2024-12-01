@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 //in using the request, have it checked if the request <= need, and request <= available;
@@ -7,18 +8,18 @@ public class Request {
 
     private Process process;
     private List<Integer> request;
-    private List<Integer> available;
+    private int[][] available;
     public List<Integer> originalAllocation;
     public List<Integer> originalNeed;
-    public List<Integer> originalAvailable;
+    public int[][] originalAvailable;
 
-    public Request(Process process, List<Integer> available, List<Integer> request) {
+    public Request(Process process, int[][] available, List<Integer> request) {
         this.process = process;
         this.request = request;
         this.available = available;
         this.originalAvailable = available;
-        this.originalAllocation = process.getAllocation();
-        this.originalNeed = process.getNeed();
+        this.originalAllocation = new ArrayList<>(process.getAllocation());
+        this.originalNeed = new ArrayList<>(process.getNeed());
 
     }
 
@@ -36,12 +37,12 @@ public class Request {
     }
 
     //Available = Request.ComputeAvailable();
-    public List<Integer> ComputeAvailable() {
-        List<Integer> Available = this.available;
+    public int[][] ComputeAvailable() {
+        int[][] Available = this.available;
 
         for (int i = 0; i < request.size(); i++) {
             int req = request.get(i);
-            available.set(i, (available.get(i) - req));
+            Available[0][i] -= req;
         }
 
         return Available;
@@ -59,6 +60,22 @@ public class Request {
         return Need;
     }
 
+    public List<Integer> getOriginalAllocation(){
+        return originalAllocation;
+    }
+
+    public int[][] getOriginalAvailable(){
+        return originalAvailable;
+    }
+
+    public List<Integer> getOriginalNeed(){
+        return originalNeed;
+    }
+
+
+
+
+
     // if (!isViable){
     // System.out.println("Request is not viable");
     // return;
@@ -70,12 +87,11 @@ public class Request {
                 System.out.println("Requested Resource is less the need of the process");
                 return false; 
             } 
-            if(!(request.get(i) <= available.get(i))){
+            if(!(request.get(i) <= available[0][i])){
                 System.out.println("Requested Resource is less the available");
                 return false; 
             }
         }
         return true;
     }
-
 }
