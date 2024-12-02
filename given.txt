@@ -42,6 +42,10 @@ yes
 1
 1,1,1
 
+
+
+unsafe request -> rollback -> safe sequence
+
 5
 3
 10,5,7
