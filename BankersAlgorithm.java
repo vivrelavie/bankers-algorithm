@@ -127,6 +127,7 @@ public class BankersAlgorithm {
         int requestedProcess = -1;
         boolean rollback = false;
 
+        System.out.println("\nNow Performing Banker's Algorithm");
         for (int index = 0; index < processCount + 1; index++) { //processCount + 1 to give a chance to rollback
             if (FinishedProcess.size() == processCount) {
                 break; //if nakahanap na safe sequence end na
@@ -182,7 +183,6 @@ public class BankersAlgorithm {
                 System.out.println("Now Rolling Back");
                 continue;
             }
-            System.out.println(index);
             if (index == processCount && !isSafe && rollback){
                 System.out.println("No Safe Sequence found");
                 break; //if not safe and rollback happened, then there is no safe sequence
