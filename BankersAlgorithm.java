@@ -117,64 +117,81 @@ public class BankersAlgorithm {
         } else {
             System.out.println("Proceeding");
         }
-        
+        /*
+         * ================
+         * Perform bankers algorithm
+         * ================
+         */
         List<Integer> FinishedProcess = new ArrayList<>();
         int j = 0;
-        for (int index = 0; index < processCount; index++) {
-            if (FinishedProcess.size() == processCount)
-                break;
+        int requestedProcess = -1;
+        boolean rollback = false;
+
+        for (int index = 0; index < processCount + 1; index++) { //processCount + 1 to give a chance to rollback
+            if (FinishedProcess.size() == processCount) {
+                break; //if nakahanap na safe sequence end na
+            }
             for (int i = 0; i < processCount; i++) {
                 if (FinishedProcess.contains(i)) {
-                    continue;
+                    continue; //skip finished processes
                 }
-
                 Process currentProcess = processes.get(i);
-
+                System.out.println("\nNow Processing Process " + currentProcess.getProcessNum());
                 List<Integer> CurrentNeed = currentProcess.getNeed();
                 List<Integer> CurrentAllocation = currentProcess.getAllocation();
-                Boolean isRequest = currentProcess.getRequest();
-                int k = 0;
+                if (processes.get(i).getRequest()) {
+                    requestedProcess = i; //get the number of the requested process (if there is)
+                }
 
+                //compare instance of available to every instance of need
+                int k = 0; 
                 while (k < resourceCount) {
                     if (CurrentNeed.get(k) > available[j][k]) {
-                        if (isRequest) {
-                            processes.get(i).setAllocation(request.getOriginalAllocation());
-                            processes.get(i).setNeed(request.getOriginalNeed());
-                            processes.get(i).setRequest(false);
-                            available = request.getOriginalAvailable();
-                            FinishedProcess.clear();
-                            i = 0;
-                            index = 0;
-                            continue;
-                        }
-                        break;
+                        System.out.println("Process " + currentProcess.getProcessNum() + " Can't be processed");
+                        break; //break if a need is less than available
                     }
                     k++;
                 }
-                if (k == resourceCount) {
+
+                if (k == resourceCount) { //if all available is > need of current process
+                    System.out.println("Process " + currentProcess.getProcessNum() + " Can be processed\n");
+                    System.out.println("Updating Available");
                     for (int k2 = 0; k2 < resourceCount; k2++) {
-                        available[j + 1][k2] = CurrentAllocation.get(k2) + available[j][k2];
+                        System.out.println((char) ('A' + k2) + ": " + available[j][k2] + " -> " + (CurrentAllocation.get(k2) + available[j][k2]));                        available[j + 1][k2] = CurrentAllocation.get(k2) + available[j][k2]; //populate available
+
                     }
-                    FinishedProcess.add(processes.get(i).getProcessNum());
+                    FinishedProcess.add(processes.get(i).getProcessNum()); //add to finished process
+                    System.out.println("Finished Processes: " + Arrays.toString(FinishedProcess.toArray()));
                     j++;
                 }
             }
+
+            //for request rollback if unsafe state
+            boolean isSafe = FinishedProcess.size() == processCount;
+            if (!isSafe && requestedProcess >= 0 && !rollback) {
+                // rollback
+                processes.get(requestedProcess).setAllocation(request.originalAllocation);
+                processes.get(requestedProcess).setNeed(request.originalNeed);
+                clearArray(available); //clear available
+                available = request.getOriginalAvailable(); //repopulate available
+                FinishedProcess.clear();
+                index = 0; //reset loop
+                rollback = true; //set rollback to true to ensure rollback only happens once
+                j = 0;
+                System.out.println("Due to the request, there is no safe sequence");
+                System.out.println("Now Rolling Back");
+                continue;
+            }
+            System.out.println(index);
+            if (index == processCount && !isSafe && rollback){
+                System.out.println("No Safe Sequence found");
+                break; //if not safe and rollback happened, then there is no safe sequence
+            }
         }
 
-
-        if (FinishedProcess.size() == processCount) {
-            System.out.println("Safe State");
-        } else {
-            System.out.println("Unsafe");
-        }
-
-        System.out.println(Arrays.toString(FinishedProcess.toArray()));
-
-        // Validate if deadlock
-        // Validate if safe sequence
-
-        // Output table matrix
+        System.out.println("\n\nFinal Matrix: ");
         DisplayProcesses(processes, available);
+        System.out.println("Finished Processes: " + Arrays.toString(FinishedProcess.toArray()));
 
         sc.close();
     }
@@ -231,5 +248,12 @@ public class BankersAlgorithm {
         }
         return sb.toString().trim();
     }
-
+    private static int[][] clearArray(int[][] array){
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 0; j < array[0].length; j++) {
+                array[i][j] = 0;
+            }
+        }
+        return array;
+    }
 }

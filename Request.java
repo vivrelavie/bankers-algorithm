@@ -17,13 +17,19 @@ public class Request {
         this.process = process;
         this.request = request;
         this.available = available;
-        this.originalAvailable = available;
+        this.originalAvailable = deepCopy2DArray(available);
         this.originalAllocation = new ArrayList<>(process.getAllocation());
         this.originalNeed = new ArrayList<>(process.getNeed());
 
     }
 
-
+    private int[][] deepCopy2DArray(int[][] array) {
+        int[][] copy = new int[array.length][];
+        for (int i = 0; i < array.length; i++) {
+            copy[i] = array[i].clone(); // Clone each row
+        }
+        return copy;
+    }
     //processes.get(ProcessRequested).setAllocation = Request.ComputeAllocation();
     public List<Integer> ComputeAllocation() {
         List<Integer> Allocation = this.process.getAllocation();
