@@ -130,7 +130,7 @@ public class BankersAlgorithm {
         System.out.println("\nNow Performing Banker's Algorithm");
         for (int index = 0; index < processCount + 1; index++) { //processCount + 1 to give a chance to rollback
             if (FinishedProcess.size() == processCount) {
-                break; //if nakahanap na safe sequence end na
+                break; //if no safe sequence end na
             }
             for (int i = 0; i < processCount; i++) {
                 if (FinishedProcess.contains(i)) {
@@ -169,8 +169,14 @@ public class BankersAlgorithm {
 
             //for request rollback if unsafe state
             boolean isSafe = FinishedProcess.size() == processCount;
-            if (!isSafe && requestedProcess >= 0 && !rollback) {
+            if (index == processCount && !isSafe && requestedProcess >= 0 && !rollback) {
                 // rollback
+                System.out.println("there is no safe sequence");
+                System.out.println("request should not be granted");
+                DisplayProcesses(processes, available);
+                System.out.println("Now Rolling Back");
+                System.out.println();
+
                 processes.get(requestedProcess).setAllocation(request.originalAllocation);
                 processes.get(requestedProcess).setNeed(request.originalNeed);
                 clearArray(available); //clear available
@@ -179,8 +185,7 @@ public class BankersAlgorithm {
                 index = 0; //reset loop
                 rollback = true; //set rollback to true to ensure rollback only happens once
                 j = 0;
-                System.out.println("Due to the request, there is no safe sequence");
-                System.out.println("Now Rolling Back");
+
                 continue;
             }
             if (index == processCount && !isSafe && rollback){
@@ -191,7 +196,17 @@ public class BankersAlgorithm {
 
         System.out.println("\n\nFinal Matrix: ");
         DisplayProcesses(processes, available);
+        int FinalIndex = j == FinishedProcess.size() + 1 ? j + 1 : j ;
+        String TotalResource = Arrays.toString(available[FinalIndex]).replace("[","").replace("]", "").replace(",","");
+        System.out.println("Total Resource Used: " + TotalResource);
         System.out.println("Finished Processes: " + Arrays.toString(FinishedProcess.toArray()));
+        if(processCount != FinishedProcess.size()){
+            System.out.println("System is not in a safe state");
+        }
+        else{
+            System.out.println("System is in a safe state");
+
+        }
 
         sc.close();
     }
@@ -230,7 +245,6 @@ public class BankersAlgorithm {
                     need,
                     availableRow);
         }
-        System.out.println();
     }
 
     private static <T> String listToString(List<T> list) {
